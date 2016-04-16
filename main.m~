@@ -1,0 +1,31 @@
+% import multi images, and use snake function
+
+
+t= 0: 0.05:6.28;
+x = 32 + 17*cos(t);  
+y = 32 + 17*sin(t);
+[x,y] = snakeinterp(x,y,2,0.5);
+
+dir_name='liptracking2';
+
+start_frame=1302;
+end_frame=1910;
+for frame=start_frame:end_frame
+    dir=['./',dir_name,'/',dir_name,'_',num2str(frame,'%05d'),'.jpg'];
+    
+    img=imread(dir);
+    % raw_img=img;
+    if length(size(img))==3
+        img=rgb2gray(img);
+    end
+    
+    [x,y]=snake(img,x,y,3);
+    [x,y] = snakeinterp(x,y,2,0.5);
+    
+    imshow(raw_img);
+    snakedisp(x,y,'r')
+    break
+
+end
+
+

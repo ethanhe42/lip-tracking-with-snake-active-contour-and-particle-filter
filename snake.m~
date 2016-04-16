@@ -1,0 +1,97 @@
+%deal with single image, become function when done.
+% filename
+% 
+function [x,y]=snake(img,x,y,m,learning_rate)
+
+methods={'slide' 'normal' 'classic'};
+method=methods(m);
+
+img=im2double(img);
+
+    
+%     imshow(img);
+%     drawnow
+
+if strcmp(method,'dvf')
+    [u,v] = GVF(img, 0.2, 80); 
+    mag = sqrt(u.*u+v.*v);
+    px = u./(mag+1e-10); py = v./(mag+1e-10); 
+else
+    img=imgaussfilt(img,.5);
+    imshow(img)
+    drawnow
+    snakedisp(x,y,'r')
+    
+    [px,py]=gradient(img);
+end
+[pxx,pxy]=gradient(px);
+[pyx,pyy]=gradient(py);
+
+alpha=.5;
+beta=10;
+kappa=;
+zeta=3;
+N=size(x,1);
+
+alpha = alpha* ones(1,N); 
+beta = beta*ones(1,N);
+
+a = beta;
+b = -alpha - 4*beta;
+c = 2*alpha +6*beta;
+
+% generate the parameters matrix
+
+
+
+if strcmp(method,'slide')
+    A = diag(a(1:N-2),-2);% + diag(a(N-1:N),N-2);
+    A = A + diag(b(1:N-1),-1);% + diag(b(N), N-1);
+    A = A + diag(c);
+    A = A + diag(b(1:N-1),1);% + diag(b(N),-(N-1));
+    A = A + diag(a(1:N-2),2);% + diag(a(N-1:N),-(N-2));
+    
+    invA=inv(A);
+
+else
+    A = diag(a(1:N-2),-2) + diag(a(N-1:N),N-2);
+    A = A + diag(b(1:N-1),-1) + diag(b(N), N-1);
+    A = A + diag(c);
+    A = A + diag(b(1:N-1),1) + diag(b(N),-(N-1));
+    A = A + diag(a(1:N-2),2) + diag(a(N-1:N),-(N-2));
+    if strcmp(method,'normal')
+        
+        template_x=x;
+        template_y=y;
+    end
+end
+
+inv_AplusI = inv(learning_rate * A + diag(ones(1,N)));
+
+
+for count = 1:10
+   intensity_x = interp2(px,x,y);
+   intensity_y = interp2(py,x,y);
+   zerocross_x = 2*(interp2(pxx,x,y)+interp2(pyx,x,y));
+   zerocross_y = 2*(interp2(pxy,x,y)+interp2(pyy,x,y));
+   ext_x=learning_rate* (-kappa*intensity_x-zeta*zerocross_x);
+   ext_y=learning_rate* (-kappa*intensity_y-zeta*zerocross_y);
+   
+
+
+    if strcmp(method,'slide')
+        x=invA*(ext_x/learning_rate);
+        y=invA*(ext_y/learning_rate);
+    else
+        if strcmp(method,'classic')
+           x = inv_AplusI * (x - ext_x);
+           y = inv_AplusI * (y - ext_y);
+        else
+           x =template_x+ inv_AplusI * ( -ext_x); %#ok<*MINV>
+           y =template_y+ inv_AplusI * ( -ext_y);
+        end
+    end
+end
+
+
+
