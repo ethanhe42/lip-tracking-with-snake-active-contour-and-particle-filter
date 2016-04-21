@@ -1,32 +1,10 @@
 function [xi,yi] = snakeinterp(x,y,dmax,dmin)
-%SNAKEINTERP  Interpolate the snake adaptively
-%   [xi,yi] = snakeinterp(x,y,dmax,dmin)
-%
-%   dmax: the maximum distance between two snake points
-%   dmin: the maximum distance between two snake points
-%   d(i,i+1)>dmax, then a new point is added between i and i+1
-%   d(i,i+1)<dmin, then either i or i+1 is removed 
-%  
-%   NOTE: the spacing of original curve must be close to the 
-%         range defined by dmax and dmin. For arbitrary spacing,
-%         try snakeinterp1.
-% 
-%   See also SNAKEINTERP1
-
-%    there is a bug in the program for points removal
-
-%   Chenyang Xu and Jerry L. Prince, 4/1/95, 6/17/97
-%   Copyright (c) 1995-97 by Chenyang Xu and Jerry L. Prince
-%   Image Analysis and Communications Lab, Johns Hopkins University
-
-% convert to column vector
 x = x(:); y = y(:);
 
 N = length(x);
 
 d = abs(x([2:N 1])- x(:)) + abs(y([2:N 1])- y(:));
 
-% remove the points which distance to neighbor points is shorter than dmin
 IDX = (d<dmin);
 
 idx = find(IDX==0);

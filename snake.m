@@ -2,12 +2,12 @@
 % filename
 % 
 function [x,y]=snake(img,x,y,m,learning_rate)
-alpha=0;
+alpha=50;
 
-kappa=10;
-kappap=-.6;
-beta=350*kappa;
-zeta=600*kappa;
+kappa=100;
+kappap=-.0;
+beta=100;
+zeta=10000;
 % alpha=.05;
 % 
 % kappa=.05;
@@ -18,7 +18,6 @@ sigma=6;
 methods={'slide' 'normal' 'classic' 'gvf' 'balloon'};
 method=methods(m);
 
-img=im2double(img);
 
     
 %     imshow(img);
@@ -65,7 +64,7 @@ if strcmp(method,'slide')
     while rank(A+w*eye(size(A)))<size(A,1)
         w=w+1e-15;
     end
-    disp(w )
+    disp(w)
     disp(rank(A))
     disp(size(A))
     invA=inv(A+w*eye(size(A)));
@@ -86,12 +85,10 @@ end
 inv_AplusI = inv(learning_rate * A + diag(ones(1,N)));
 
 
-for count = 1:50
-    if count > 10
-        kappap=0;
-    else
-        kappap=-1.5;
-    end
+for count = 1:100
+%     imshow(img)
+%     drawnow
+%     snakedisp(x,y,'r')
    intensity_x = interp2(px,x,y);
    intensity_y = interp2(py,x,y);
    if strcmp(method,'gvf')==0
@@ -133,10 +130,6 @@ for count = 1:50
 %     residue=sum((newx-x).^2+(newy-y).^2)/(length(x)+length(y));
     x=newx;
     y=newy;
-    
-    imshow(img)
-    drawnow
-    snakedisp(x,y,'r')
 %     if residue<.1/learning_rate
 %         break
 %     end
