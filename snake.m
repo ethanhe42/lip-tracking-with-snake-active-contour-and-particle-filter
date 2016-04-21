@@ -2,7 +2,7 @@
 % filename
 % 
 function [x,y]=snake(img,x,y,m,learning_rate)
-alpha=50;
+alpha=10;
 
 kappa=100;
 kappap=-.0;

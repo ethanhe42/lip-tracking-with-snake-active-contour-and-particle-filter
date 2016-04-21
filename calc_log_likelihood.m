@@ -1,4 +1,4 @@
-function L = calc_log_likelihood(Xstd_rgb, Xrgb_trgt, X, Y) %#codegen
+function L = calc_log_likelihood(Xstd_rgb, trgt, X, Y) %#codegen
 
 Npix_h = size(Y, 1);
 Npix_w = size(Y, 2);
@@ -6,7 +6,6 @@ Npix_w = size(Y, 2);
 N = size(X,2);
 
 L = zeros(1,N);
-Y = permute(Y, [3 1 2]);
 
 A = -log(sqrt(2 * pi) * Xstd_rgb);
 B = - 0.5 / (Xstd_rgb.^2);
@@ -23,9 +22,9 @@ for k = 1:N
     
     if I && J
         
-        C = double(Y(:, m, n));
+        C = double(Y(m, n));
         
-        D = C - Xrgb_trgt;
+        D = C - trgt;
         
         D2 = D' * D;
         
