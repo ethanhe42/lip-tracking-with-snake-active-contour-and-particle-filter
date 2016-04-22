@@ -10,15 +10,20 @@ Xstd_pos = 25;
 Xstd_vec = 5;
 
 trgt = 1;
-
+samples={{'template3.mat','liptracking3',1295,1928},...
+         {'template.mat','liptracking2',1302,1910},...
+         {'template4.mat','liptracking4',68,338},...
+         {}};
+video=samples{2};
 %%
-load('template3.mat');
+
+load(video{1});
 % particles
 particles=create_particles(y,x,Npop_particles);
 [x,y] = snakeinterp(x,y,2,0.5);
 
 
-dir_name='liptracking3';
+dir_name=video{2};
 
 outputVideo = VideoWriter([dir_name,'.avi']);
 outputVideo.FrameRate = 24;
@@ -29,22 +34,22 @@ resize = 1;
 % start_frame=1302;
 % end_frame=1910;
 %3
-start_frame=1295;
-end_frame=1928;
+start_frame=video{3};
+end_frame=video{4};
 dir=['./',dir_name,'/',dir_name,'_',num2str(start_frame,'%05d'),'.jpg'];
 frame_size=size(imread(dir));
-
-t = 0:0.05:6.28;
+particle_var=zeros(size(1,end_frame-start_frame+1));
+% t = 0:0.05:6.28;
 for frame=start_frame:end_frame
     dir=['./',dir_name,'/',dir_name,'_',num2str(frame,'%05d'),'.jpg'];
     % use full file next time
-    img=imread(dir);
+    raw_img=imread(dir);
     
-    img=im2double(img);
-    img=rgb2hsv(img);
+    raw_img=im2double(raw_img);
+    img=rgb2hsv(raw_img);
     img=img(:,:,1);
-    disp(max(img(:)))
-    imshow(img)
+    
+    imshow(raw_img)
     % Forecasting
     particles = update_particles(F_update, Xstd_pos, Xstd_vec, particles);
     
@@ -61,36 +66,33 @@ for frame=start_frame:end_frame
 
     % raw_img=img;
     
-    %grey don't use this
-%     if length(size(img))==3
-%         img=rgb2gray(img);
-%     end
-
+    gray_img=rgb2gray(raw_img);
 
 %     oldx=x;
 %     oldy=y;
-
-%      meanx=mean(x);
-%      meany=mean(y);
-%      enlarge=.5;
-%      x = x + enlarge*(x-meanx);  
-%      y = y + enlarge*(y-meany);
+    if true
+     meanx=mean(x(:));
+     meany=mean(y(:));
+     particle_var(1,frame-start_frame+1)=...
+         (std(particles(1,:))+std(particles(2,:)));
+    disp(particle_var)
+     lam=1.5;
+     [xrank,~]=sort(particles(2,:));
+     [yrank,~]=sort(particles(1,:));
+     x =mean(particles(2,:))+...
+     lam*std(particles(2,:))*(x-meanx)/std(x(:));  
+     y =mean(particles(1,:))+...
+         lam*std(particles(1,:))*(y-meany)/std(y(:));
     
     [x,y] = snakeinterp(x,y,2,.5);
      
-     [x,y]=snake(img,x,y,5,1);
-     snakedisp(x,y,'y')
-%     disp(sum((oldx-x).^2)/length(x))
-     
-        
-
-
-
-    
+     [x,y]=snake(gray_img,x,y,3,1);
+     snakedisp(x,y,'green')
+    end
     writeVideo(outputVideo,getframe);
-
-    
-    disp(frame)
 end
 close(outputVideo);
+drawnow
+plot(particle_var);
+drawnow
 

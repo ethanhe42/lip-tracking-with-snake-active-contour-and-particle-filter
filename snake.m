@@ -2,19 +2,14 @@
 % filename
 % 
 function [x,y]=snake(img,x,y,m,learning_rate)
-alpha=10;
 
-kappa=100;
-kappap=-.0;
-beta=100;
-zeta=10000;
-% alpha=.05;
-% 
-% kappa=.05;
-% kappap=-.5;
-% beta=.1*kappa;
-% zeta=.1*kappa;
-sigma=6;
+alpha=5;
+
+kappa=.05;
+kappap=-.5;
+beta=.1*kappa;
+zeta=.1*kappa;
+sigma=3;
 methods={'slide' 'normal' 'classic' 'gvf' 'balloon'};
 method=methods(m);
 
@@ -85,12 +80,13 @@ end
 inv_AplusI = inv(learning_rate * A + diag(ones(1,N)));
 
 
-for count = 1:100
+for count = 1:5
 %     imshow(img)
 %     drawnow
 %     snakedisp(x,y,'r')
    intensity_x = interp2(px,x,y);
    intensity_y = interp2(py,x,y);
+   
    if strcmp(method,'gvf')==0
        zerocross_x = 2*(intensity_x.*interp2(pxx,x,y)+intensity_y.*interp2(pyx,x,y));
        zerocross_y = 2*(intensity_x.*interp2(pxy,x,y)+intensity_y.*interp2(pyy,x,y));
