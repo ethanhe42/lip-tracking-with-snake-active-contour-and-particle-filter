@@ -1,5 +1,4 @@
-% import multi images, and use snake function
-%% particle Parameters
+sequence = 2;
 
 F_update = [1 0 1 0; 0 1 0 1; 0 0 1 0; 0 0 0 1];
 
@@ -14,7 +13,7 @@ samples={{'template3.mat','liptracking3',1295,1928},...
          {'template.mat','liptracking2',1302,1910},...
          {'template4.mat','liptracking4',68,338},...
          {}};
-video=samples{2};
+video=samples{sequence};
 %%
 
 load(video{1});
@@ -23,7 +22,7 @@ particles=create_particles(y,x,Npop_particles);
 [x,y] = snakeinterp(x,y,2,0.5);
 
 
-dir_name=video{2};
+dir_name=video{2};x
 
 outputVideo = VideoWriter([dir_name,'.avi']);
 outputVideo.FrameRate = 24;
@@ -60,9 +59,9 @@ for frame=start_frame:end_frame
     particles = resample_particles(particles, L);
 
     % Showing Image
-    hold on
-    plot(particles(2,:), particles(1,:), '.')
-    hold off
+%     hold on
+%     plot(particles(2,:), particles(1,:), '.')
+%     hold off
 
     % raw_img=img;
     
@@ -73,12 +72,10 @@ for frame=start_frame:end_frame
     if true
      meanx=mean(x(:));
      meany=mean(y(:));
-     particle_var(1,frame-start_frame+1)=...
-         (std(particles(1,:))+std(particles(2,:)));
-    disp(particle_var)
+%      particle_var(1,frame-start_frame+1)=...
+%          (std(particles(1,:))+std(particles(2,:)));
+%     disp(particle_var)
      lam=1.5;
-     [xrank,~]=sort(particles(2,:));
-     [yrank,~]=sort(particles(1,:));
      x =mean(particles(2,:))+...
      lam*std(particles(2,:))*(x-meanx)/std(x(:));  
      y =mean(particles(1,:))+...
@@ -92,7 +89,7 @@ for frame=start_frame:end_frame
     writeVideo(outputVideo,getframe);
 end
 close(outputVideo);
-drawnow
-plot(particle_var);
-drawnow
+% drawnow
+% plot(particle_var);
+% drawnow
 

@@ -3,12 +3,12 @@
 % 
 function [x,y]=snake(img,x,y,m,learning_rate)
 
-alpha=5;
+alpha=10;
 
-kappa=.05;
+kappa=.5;
 kappap=-.5;
-beta=.1*kappa;
-zeta=.1*kappa;
+beta=1*kappa;
+zeta=10000*kappa;
 sigma=3;
 methods={'slide' 'normal' 'classic' 'gvf' 'balloon'};
 method=methods(m);
@@ -80,10 +80,11 @@ end
 inv_AplusI = inv(learning_rate * A + diag(ones(1,N)));
 
 
-for count = 1:5
+for count = 1:10
 %     imshow(img)
 %     drawnow
 %     snakedisp(x,y,'r')
+% snakedisp(x,y,'green')
    intensity_x = interp2(px,x,y);
    intensity_y = interp2(py,x,y);
    
