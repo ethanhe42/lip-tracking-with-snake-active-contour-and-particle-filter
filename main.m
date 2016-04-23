@@ -8,23 +8,27 @@ function main(directory,root,idx1,idx2)
     Xstd_vec = 5;
 
     trgt = 1;
+    objects=3;
 
-    templates={'template.mat','template3.mat','template4.mat'};
+    templates={'template2.mat','template3.mat','template4.mat'};
     %%
     if strcmp(root,'liptracking2')
         load(templates{1});
     elseif strcmp(root,'liptracking3')
-        load(templates{3});
+        load(templates{2});
     elseif strcmp(root,'liptracking4')
-        load(templates{4});      
+        load(templates{3});      
     else
         disp('the root name must be liptracking*, I need this to indicate which template to use!');
     end
-    % particles
-    particles=create_particles(y,x,Npop_particles);
-    [x,y] = snakeinterp(x,y,2,0.5);
+    %% particles
+    for i=1:objects
+        particles{i}=create_particles(y(i,:),x(i,:),Npop_particles);
+        [objectx{i},objecty{i}] = snakeinterp(x(i,:),y(i,:),2,0.5);
+    end
 
-    outputVideo = VideoWriter([dir_name,'.avi']);
+
+    outputVideo = VideoWriter([root,'.avi']);
     outputVideo.FrameRate = 24;
     open(outputVideo)
 
@@ -33,58 +37,53 @@ function main(directory,root,idx1,idx2)
     start_frame=idx1;
     end_frame=idx2;
     
-    % t = 0:0.05:6.28;
+    %% processing
     for frame=start_frame:end_frame
+        %image processing
         dir=fullfile(directory,[root,'_',num2str(frame,'%05d'),'.jpg']);
-        % use full file next time
         raw_img=imread(dir);
-
         raw_img=im2double(raw_img);
         img=rgb2hsv(raw_img);
         img=img(:,:,1);
-
-        imshow(raw_img)
-        % Forecasting
-        particles = update_particles(F_update, Xstd_pos, Xstd_vec, particles);
-
-        % Calculating Log Likelihood
-        L = calc_log_likelihood(Xstd_rgb, trgt, particles(1:2, :), img);
-
-        % Resampling
-        particles = resample_particles(particles, L);
-
-        % Showing Image
-    %     hold on
-    %     plot(particles(2,:), particles(1,:), '.')
-    %     hold off
-
-        % raw_img=img;
-
         gray_img=rgb2gray(raw_img);
+        %thresh
+%         img=img>.95;
+        imshow(img)
+        
+        for i=1:objects
+            % Forecasting
+            particles{i} = update_particles(F_update, Xstd_pos, Xstd_vec, particles{i});
 
-    %     oldx=x;
-    %     oldy=y;
-        if true
-         meanx=mean(x(:));
-         meany=mean(y(:));
-    %      particle_var(1,frame-start_frame+1)=...
-    %          (std(particles(1,:))+std(particles(2,:)));
-    %     disp(particle_var)
-         lam=1.5;
-         x =mean(particles(2,:))+...
-         lam*std(particles(2,:))*(x-meanx)/std(x(:));  
-         y =mean(particles(1,:))+...
-             lam*std(particles(1,:))*(y-meany)/std(y(:));
+            % Calculating Log Likelihood
+            L = calc_log_likelihood(Xstd_rgb, trgt, particles{i}(1:2, :), img);
 
-        [x,y] = snakeinterp(x,y,2,.5);
+            % Resampling
+            particles{i} = resample_particles(particles{i}, L);
+            % raw_img=img;
+            if false
+             meanx=mean(objectx{i}(:));
+             meany=mean(objecty{i}(:));
 
-         [x,y]=snake(gray_img,x,y,3,1);
-         snakedisp(x,y,'green')
+             lam=1.5;
+             objectx{i} =mean(particles{i}(2,:))+...
+                lam*std(particles{i}(2,:))*(objectx{i}-meanx)/std(objectx{i}(:));  
+             objecty{i} =mean(particles{i}(1,:))+...
+                lam*std(particles{i}(1,:))*(objecty{i}-meany)/std(objecty{i}(:));
+
+            [objectx{i},objecty{i}] = snakeinterp(objectx{i},objecty{i},2,.5);
+            [objectx{i},objecty{i}]=snake(gray_img,objectx{i},objecty{i},3,1);
+             
+            end
+        end
+        for i=1:objects
+                        % Showing Image
+            hold on
+            plot(particles{i}(2,:), particles{i}(1,:), '.')
+            hold off
+            snakedisp(objectx{i},objecty{i},'green')
+            
         end
         writeVideo(outputVideo,getframe);
     end
     close(outputVideo);
-    % drawnow
-    % plot(particle_var);
-    % drawnow
 
