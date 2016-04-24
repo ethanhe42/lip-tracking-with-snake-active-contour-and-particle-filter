@@ -48,7 +48,7 @@ function main(directory,root,idx1,idx2)
         gray_img=rgb2gray(raw_img);
         %thresh
 %         img=img>.95;
-        imshow(img)
+        imshow(raw_img)
         
         for i=1:objects
             % Forecasting
@@ -60,7 +60,7 @@ function main(directory,root,idx1,idx2)
             % Resampling
             particles{i} = resample_particles(particles{i}, L);
             % raw_img=img;
-            if false
+            if true
              meanx=mean(objectx{i}(:));
              meany=mean(objecty{i}(:));
 
@@ -78,9 +78,9 @@ function main(directory,root,idx1,idx2)
         for i=1:objects
                         % Showing Image
             hold on
-            plot(particles{i}(2,:), particles{i}(1,:), '.')
-            hold off
-            snakedisp(objectx{i},objecty{i},'green')
+%             plot(particles{i}(2,:), particles{i}(1,:), '.')
+%             hold off
+            snakedisp(objectx{i},objecty{i},'go')
             
         end
         writeVideo(outputVideo,getframe);
