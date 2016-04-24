@@ -13,10 +13,9 @@ Tracking results are in avi format, already in my submission. After running the 
 To run the code, put images folders and all matlab scripts in the same folder. folder names should be liptracking2,liptracking3,liptracking4
 There are two ways to run my code.
 1. run entry.m, 3 online tracking will be done one by one.  
-2. call function main.m as described in homework  
+2. call function main.m in the way as described in homework  
 main(foldername,root,startidx,endidx)   
 
-Real time processing is shown frame by frame,  
-After program finished there will be a *video name*.avi,  
-for offline watching.  
+Real time processing is shown frame by frame, but it's a bit slow. So you you can wait until the program finished, then watch the results.  
+After program finished there will be a *video name*.avi for each testing sequence, for offline watching.  
 
