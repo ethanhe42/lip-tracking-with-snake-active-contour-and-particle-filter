@@ -25,6 +25,10 @@ function main(directory,root,idx1,idx2)
     for i=1:objects
         particles{i}=create_particles(y(i,:),x(i,:),Npop_particles);
         [objectx{i},objecty{i}] = snakeinterp(x(i,:),y(i,:),2,0.5);
+        bound{i}=[mean(particles{i}(2,:)),...
+        std(particles{i}(2,:)),...
+        mean(particles{i}(1,:)),...
+        std(particles{i}(1,:))];
     end
 
 
@@ -49,6 +53,8 @@ function main(directory,root,idx1,idx2)
     [features, points] = extractFeatures(gray_img, points);
     pointsPrevious = points;
     featuresPrevious = features;
+    
+        boundscale=2;
     %% processing
     for frame=start_frame:end_frame
         %image processing
@@ -76,8 +82,19 @@ function main(directory,root,idx1,idx2)
        
         matchedPoints = points(indexPairs(:,1), :);
         matchedPointsPrev = pointsPrevious(indexPairs(:,2), :);   
+        hold on
+        scatter(matchedPoints.Location(:,1),matchedPoints.Location(:,2));
+        form = estimateGeometricTransform(matchedPoints, matchedPointsPrev,...
+        'similarity',...
+        'Confidence', 99.9,...
+        'MaxNumTrials', 1000,...
+        'MaxDistance',size(raw_img,1)/5.0);    
         
-        
+        hold on
+        plot([size(raw_img,2)/2,size(raw_img,2)/2+form.T(3,1)],...
+            size(raw_img,1)/2,'r*');
+        disp(form.T)
+
         for i=1:objects
             % Forecasting
             particles{i} = update_particles(F_update, Xstd_pos, Xstd_vec, particles{i});
@@ -106,33 +123,36 @@ function main(directory,root,idx1,idx2)
         bounding=zeros(size(matchedPoints.Location));
         for i=1:objects
                         % Showing Image
-%             hold on
-%             plot(particles{i}(2,:), particles{i}(1,:), '.')
+%              hold on
+%              plot(particles{i}(2,:), particles{i}(1,:), '.')
 %             hold off
 %             snakedisp(objectx{i},objecty{i},'green')
             
-            scale=2;
-            meanx=mean(particles{i}(2,:));
-            stdx=std(particles{i}(2,:));
-            
-            bounding(:,1)=bounding(:,1)|((matchedPoints.Location(:,1)>meanx-scale*stdx) &...
-                (matchedPoints.Location(:,1)<meanx+scale*stdx));
 
-            meanx=mean(particles{i}(1,:));
-            stdx=std(particles{i}(1,:));
-            
-            bounding(:,2)=bounding(:,2)|((matchedPoints.Location(:,2)>meanx-scale*stdx) &...
-                (matchedPoints.Location(:,2)<meanx+scale*stdx));
-
+%             bound=[mean(particles{i}(2,:)),...
+%             std(particles{i}(2,:)),...
+%             mean(particles{i}(1,:)),...
+%             std(particles{i}(1,:))];
+%             bounding=zeros(size(matchedPoints.Location));
+%             bounding(:,1)=bounding(:,1)|((matchedPoints.Location(:,1)>bound(1)-boundscale*bound(2)) &...
+%                 (matchedPoints.Location(:,1)<bound(1)+boundscale*bound(2)));
+% 
+% 
+%             
+%             bounding(:,2)=bounding(:,2)|((matchedPoints.Location(:,2)>bound(3)-boundscale*bound(4)) &...
+%                 (matchedPoints.Location(:,2)<bound(2)+boundscale*bound(4)));
+%         
+%         idx=find(bounding(:,1)&bounding(:,2));
+%         showPoints=matchedPoints(idx);
+        
             
             
         end
-        idx=find(bounding(:,1)&bounding(:,2));
+
         pointsPrevious = points;
         featuresPrevious = features;
-        hold on
-        matchedPoints=matchedPoints(idx);
-        scatter(matchedPoints.Location(:,1),matchedPoints.Location(:,2));
+        
+        
         
         writeVideo(outputVideo,getframe);
     end
