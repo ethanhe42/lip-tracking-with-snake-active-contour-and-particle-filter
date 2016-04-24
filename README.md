@@ -4,7 +4,7 @@ As it is mentioned in homework, I implemented some advanced features. My snake i
 - It can deal with sharp change, like in the middle of liptracking3.avi.  
 - It can track other face features: eyes  
 - For liptracking3 and liptracking4, my snake can track the full video.  
-- For liptracking2, maybe my snake will lose tracking at frame:1493, able to track about 200 frames (Uncertainty is because of partical filter).  
+- For liptracking2, maybe my snake will lose tracking lip at frame:1493, able to track lip about 200 frames (Uncertainty is because of partical filter). However, eyes can be tracked in the full video.  
 
 ### Results
 Tracking results are in avi format, already in my submission. After running the codes, they will be override by new results.  
