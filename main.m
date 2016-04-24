@@ -37,12 +37,20 @@ function main(directory,root,idx1,idx2)
     start_frame=idx1;
     end_frame=idx2;
     
+        %image processing
+    dir=fullfile(directory,[root,'_',num2str(start_frame,'%05d'),'.jpg']);
+    raw_img=imread(dir);
+    raw_img=im2double(raw_img);
+    img=rgb2hsv(raw_img);
+    img=img(:,:,1);
+    gray_img=rgb2gray(raw_img);
+    MetricThreshold=900;
+    points = detectSURFFeatures(gray_img,'MetricThreshold',MetricThreshold);    
+    [features, points] = extractFeatures(gray_img, points);
+    pointsPrevious = points;
+    featuresPrevious = features;
     %% processing
     for frame=start_frame:end_frame
-        
-        pointsPrevious = points;
-        featuresPrevious = features;
-        
         %image processing
         dir=fullfile(directory,[root,'_',num2str(frame,'%05d'),'.jpg']);
         raw_img=imread(dir);
@@ -52,9 +60,8 @@ function main(directory,root,idx1,idx2)
         gray_img=rgb2gray(raw_img);
         %thresh
 %         img=img>.95;
-        imshow(img)
+        imshow(raw_img)
         %% detect features
-        MetricThreshold=100;
         points = detectSURFFeatures(gray_img,'MetricThreshold',MetricThreshold);    
         [features, points] = extractFeatures(gray_img, points);
         % Unique matching
@@ -62,15 +69,14 @@ function main(directory,root,idx1,idx2)
             matchFeatures(features, featuresPrevious,...
             'method', 'Approximate',...
             'Metric','SAD',...
-            'MatchThreshold',10,'MaxRatio',.8, 'Unique', true);
+            'MatchThreshold',100,'MaxRatio',1, 'Unique', true);
         % method Approximate ?
         %'MatchThreshold',.5
         %'MaxRatio',.8,
        
         matchedPoints = points(indexPairs(:,1), :);
         matchedPointsPrev = pointsPrevious(indexPairs(:,2), :);   
-        hold on
-        plot(points);
+        
         
         for i=1:objects
             % Forecasting
@@ -97,14 +103,37 @@ function main(directory,root,idx1,idx2)
              
             end
         end
+        bounding=zeros(size(matchedPoints.Location));
         for i=1:objects
                         % Showing Image
-            hold on
-            plot(particles{i}(2,:), particles{i}(1,:), '.')
-            hold off
-            snakedisp(objectx{i},objecty{i},'green')
+%             hold on
+%             plot(particles{i}(2,:), particles{i}(1,:), '.')
+%             hold off
+%             snakedisp(objectx{i},objecty{i},'green')
+            
+            scale=2;
+            meanx=mean(particles{i}(2,:));
+            stdx=std(particles{i}(2,:));
+            
+            bounding(:,1)=bounding(:,1)|((matchedPoints.Location(:,1)>meanx-scale*stdx) &...
+                (matchedPoints.Location(:,1)<meanx+scale*stdx));
+
+            meanx=mean(particles{i}(1,:));
+            stdx=std(particles{i}(1,:));
+            
+            bounding(:,2)=bounding(:,2)|((matchedPoints.Location(:,2)>meanx-scale*stdx) &...
+                (matchedPoints.Location(:,2)<meanx+scale*stdx));
+
+            
             
         end
+        idx=find(bounding(:,1)&bounding(:,2));
+        pointsPrevious = points;
+        featuresPrevious = features;
+        hold on
+        matchedPoints=matchedPoints(idx);
+        scatter(matchedPoints.Location(:,1),matchedPoints.Location(:,2));
+        
         writeVideo(outputVideo,getframe);
     end
     close(outputVideo);
