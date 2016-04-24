@@ -5,8 +5,10 @@ As it is mentioned in homework, I implemented some advanced features. My snake i
 - It can track other face features: eyes  
 - For liptracking3 and liptracking4, my snake can track the full video.  
 - For liptracking2, maybe my snake will lose tracking at frame:1493, able to track about 200 frames (Uncertainty is because of partical filter).  
+
 ### Results
 Tracking results are in avi format, already in my submission. After running the codes, they will be override by new results.  
+
 ### instuction on run the code  
 To run the code, put images folders and all matlab scripts in the same folder. folder names should be liptracking2,liptracking3,liptracking4
 There are two ways to run my code.
