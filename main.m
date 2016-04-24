@@ -39,6 +39,10 @@ function main(directory,root,idx1,idx2)
     
     %% processing
     for frame=start_frame:end_frame
+        
+        pointsPrevious = points;
+        featuresPrevious = features;
+        
         %image processing
         dir=fullfile(directory,[root,'_',num2str(frame,'%05d'),'.jpg']);
         raw_img=imread(dir);
@@ -49,6 +53,24 @@ function main(directory,root,idx1,idx2)
         %thresh
 %         img=img>.95;
         imshow(img)
+        %% detect features
+        MetricThreshold=100;
+        points = detectSURFFeatures(gray_img,'MetricThreshold',MetricThreshold);    
+        [features, points] = extractFeatures(gray_img, points);
+        % Unique matching
+        [indexPairs,matchmetric] = ...
+            matchFeatures(features, featuresPrevious,...
+            'method', 'Approximate',...
+            'Metric','SAD',...
+            'MatchThreshold',10,'MaxRatio',.8, 'Unique', true);
+        % method Approximate ?
+        %'MatchThreshold',.5
+        %'MaxRatio',.8,
+       
+        matchedPoints = points(indexPairs(:,1), :);
+        matchedPointsPrev = pointsPrevious(indexPairs(:,2), :);   
+        hold on
+        plot(points);
         
         for i=1:objects
             % Forecasting
