@@ -80,7 +80,7 @@ end
 inv_AplusI = inv(learning_rate * A + diag(ones(1,N)));
 
 
-for count = 1:50
+for count = 1:7
 %     imshow(img)
 %     drawnow
 %     snakedisp(x,y,'r')

@@ -36,7 +36,7 @@ function main(directory,root,idx1,idx2)
     
     start_frame=idx1;
     end_frame=idx2;
-    
+    lose=zeros(1,3);
     %% processing
     for frame=start_frame:end_frame
         %image processing
@@ -49,8 +49,35 @@ function main(directory,root,idx1,idx2)
         %thresh
 %         img=img>.95;
         imshow(raw_img)
-        
+%          for i=1:objects
+%             % Forecasting
+%             particles{i} = update_particles(F_update, Xstd_pos, Xstd_vec, particles{i});
+% 
+%             % Calculating Log Likelihood
+%             L = calc_log_likelihood(Xstd_rgb, trgt, particles{i}(1:2, :), img);
+% 
+%             % Resampling
+%             particles{i} = resample_particles(particles{i}, L);
+%             % raw_img=img;
+%             if true
+%              meanx=mean(objectx{i}(:));
+%              meany=mean(objecty{i}(:));
+% 
+%              lam=1.5;
+%              objectx{i} =mean(particles{i}(2,:))+...
+%                 lam*std(particles{i}(2,:))*(objectx{i}-meanx)/std(objectx{i}(:));  
+%              objecty{i} =mean(particles{i}(1,:))+...
+%                 lam*std(particles{i}(1,:))*(objecty{i}-meany)/std(objecty{i}(:));
+% 
+%             [objectx{i},objecty{i}] = snakeinterp(objectx{i},objecty{i},2,.5);
+%             [objectx{i},objecty{i}]=snake(gray_img,objectx{i},objecty{i},3,1);
+%              
+%             end
+%         end       
         for i=1:objects
+            if lose(i)==1
+                continue
+            end
             % Forecasting
             particles{i} = update_particles(F_update, Xstd_pos, Xstd_vec, particles{i});
 
@@ -69,17 +96,24 @@ function main(directory,root,idx1,idx2)
                 lam*std(particles{i}(2,:))*(objectx{i}-meanx)/std(objectx{i}(:));  
              objecty{i} =mean(particles{i}(1,:))+...
                 lam*std(particles{i}(1,:))*(objecty{i}-meany)/std(objecty{i}(:));
-
-            [objectx{i},objecty{i}] = snakeinterp(objectx{i},objecty{i},2,.5);
+            try
+                [objectx{i},objecty{i}] = snakeinterp(objectx{i},objecty{i},2,.5);
+            catch
+                %loss i object
+                lose(i)=1;
+            end
             [objectx{i},objecty{i}]=snake(gray_img,objectx{i},objecty{i},3,1);
              
             end
         end
         for i=1:objects
+            if lose(i)==1
+                continue
+            end
                         % Showing Image
             hold on
-%             plot(particles{i}(2,:), particles{i}(1,:), '.')
-%             hold off
+            plot(particles{i}(2,:), particles{i}(1,:), '.')
+            hold off
             snakedisp(objectx{i},objecty{i},'go')
             
         end
