@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Lip-tracking-with-snake-active-contour-and-particle-filter : ">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Lip-tracking-with-snake-active-contour-and-particle-filter</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/yihui-he/lip-tracking-with-snake-active-contour-and-particle-filter">View on GitHub</a>
+
+          <h1 id="project_title">Lip-tracking-with-snake-active-contour-and-particle-filter</h1>
+          <h2 id="project_tagline"></h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/yihui-he/lip-tracking-with-snake-active-contour-and-particle-filter/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/yihui-he/lip-tracking-with-snake-active-contour-and-particle-filter/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h2>
+<a id="lip-tracking-and-eyes-tracking" class="anchor" href="#lip-tracking-and-eyes-tracking" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>lip tracking and eyes tracking</h2>
+
+<p><img src="https://github.com/yihui-he/proj2/blob/master/pic.png" alt="alt tag"></p>
+
+<h3>
+<a id="performance-and-extra-points" class="anchor" href="#performance-and-extra-points" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Performance and extra points</h3>
+
+<p>As it is mentioned in homework, I implemented some advanced features. My snake is particle filter enhanced.  </p>
+
+<ul>
+<li>It can deal with sharp change, like in the middle of liptracking3.avi.<br>
+</li>
+<li>It can track other face features: eyes<br>
+</li>
+<li>For liptracking3 and liptracking4, my snake can track the full video.<br>
+</li>
+<li>For liptracking2, maybe my snake will lose tracking lip at frame:1493, able to track lip about 200 frames (Uncertainty is because of partical filter). However, eyes can be tracked in the full video.<br>
+</li>
+</ul>
+
+<h3>
+<a id="results" class="anchor" href="#results" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Results</h3>
+
+<p>Tracking results are in avi format, already in my submission. After running the codes, they will be override by new results.  </p>
+
+<h3>
+<a id="instuction-on-run-the-code" class="anchor" href="#instuction-on-run-the-code" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>instuction on run the code</h3>
+
+<p>To run the code, put images folders and all matlab scripts in the same folder. folder names should be liptracking2,liptracking3,liptracking4<br>
+There are two ways to run my code.<br>
+1. run entry.m, 3 online tracking will be done one by one.<br>
+2. call function main.m in the way as described in homework<br>
+main(foldername,root,startidx,endidx)   </p>
+
+<p>Real time processing is shown frame by frame, but it's a bit slow. So you you can wait until the program finished, then watch the results.<br>
+After program finished there will be a <em>video name</em>.avi for each testing sequence, for offline watching.  </p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Lip-tracking-with-snake-active-contour-and-particle-filter maintained by <a href="https://github.com/yihui-he">yihui-he</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
