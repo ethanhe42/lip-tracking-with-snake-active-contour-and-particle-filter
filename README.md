@@ -1,4 +1,5 @@
-proj2  
+## lip tracking and eyes tracking  
+
 ### Performance and extra points
 As it is mentioned in homework, I implemented some advanced features. My snake is particle filter enhanced.  
 - It can deal with sharp change, like in the middle of liptracking3.avi.  
