@@ -10,8 +10,8 @@ As it is mentioned in homework, I implemented some advanced features. My snake i
 Tracking results are in avi format, already in my submission. After running the codes, they will be override by new results.  
 
 ### instuction on run the code  
-To run the code, put images folders and all matlab scripts in the same folder. folder names should be liptracking2,liptracking3,liptracking4
-There are two ways to run my code.
+To run the code, put images folders and all matlab scripts in the same folder. folder names should be liptracking2,liptracking3,liptracking4  
+There are two ways to run my code.  
 1. run entry.m, 3 online tracking will be done one by one.  
 2. call function main.m in the way as described in homework  
 main(foldername,root,startidx,endidx)   
